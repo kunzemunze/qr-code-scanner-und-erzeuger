@@ -1,9 +1,10 @@
-from tkinter import filedialog
-import customtkinter as ctk
-import qrcode
+from tkinter import filedialog # UI, speziell Dateiauswahl
+import customtkinter as ctk # UI
+import qrcode # QR-Code Erzeugung
 import cv2
 from PIL import Image
-import io
+import io # Cache Nutzung für QR-Code Vorschau
+from pyzbar.pyzbar import decode  # Dekodierung von QR-Codes
 
 
 # Hauptklasse für die QR-Code Anwendung
@@ -16,12 +17,12 @@ class QRCodeApp(ctk.CTk):
         SCREEN_HEIGHT = self.winfo_screenheight()
 
         # App-Maße entsprechen herunterskalierten Screen-Maßen
-        app_width = int(SCREEN_WIDTH * 0.5)
-        app_height = int(SCREEN_HEIGHT * 0.5)
+        app_width = int(SCREEN_WIDTH * 0.75)
+        app_height = int(SCREEN_HEIGHT * 0.75)
 
         self.title("QR-Code Anwendung GSG Schulbibliothek")
         self.geometry(f"{app_width}x{app_height}")
-        self.resizable(None, None)
+        self.resizable(False, False) # Änderung von None zu False (Missverständnis)
         self.iconbitmap("app_icon_white.ico")
 
         # Window Grid-Konfiguration
@@ -111,10 +112,10 @@ class QRCodeApp(ctk.CTk):
 
         if titel and author and verlag:
             # QR-Code Daten
-            qr_data = f"Titel: {titel}, Author: {author}, Verlag: {verlag}, Edition: {auflage}, Year: {jahr}, Category: {kategorie}, Quantity: {anzahl}"
+            qr_data = f"Titel: {titel}, Author: {author}, Verlag: {verlag}, Edition: {auflage}, Year: {jahr}, Category: {kategorie}, Anzahl : {anzahl}"
 
             # QR-Code generieren
-            qr = qrcode.QRCode(version=1, box_size=10, border=5)
+            qr = qrcode.QRCode(version=None, box_size=10, border=5, error_correction=qrcode.constants.ERROR_CORRECT_H)
             qr.add_data(qr_data)
             qr.make(fit=True)
 
@@ -161,12 +162,28 @@ class QRCodeApp(ctk.CTk):
         if file_path:
             self.scan_qr_code(file_path)
 
+            # "QR-Code Bild hochladen"-Button
+            self.upload_button = ctk.CTkButton(self.upload_frame, text="QR-Code Bild hochladen",
+                                               command=self.upload_qr_image)
+            self.upload_button.grid(row=0, column=0, padx=50, pady=75, sticky="NSEW")
+            self.upload_frame.grid_rowconfigure(0, weight=1)
+            self.upload_frame.grid_columnconfigure(0, weight=1)
+
+            # Ergebnis Label
+            self.result_label = ctk.CTkLabel(self.upload_frame, text="")
+            self.result_label.grid(row=1, column=0, padx=10, pady=10)
+
     def scan_qr_code(self, file_path):
-        pass
-        # Zukünftige Funktionen: (größtenteils mit cv2)
-        # - Bild mit OpenCV laden
-        # - QR-Code dekodieren
-        # - Ergebnis anzeigen
+        # QR-Code Bild laden und dekodieren
+        image = cv2.imread(file_path)
+        decoded_objects = decode(image)
+
+        if decoded_objects:
+            decoded_data = decoded_objects[0].data.decode("utf-8")  # Extrahiere Daten aus dem QR-Code
+            self.result_label.configure(text=f"QR-Code Inhalt: {decoded_data}")
+        else:
+            self.result_label.configure(text="Kein QR-Code gefunden oder ungültig")
+
 
 # QRCodeApp Objekt
 app = QRCodeApp()
