@@ -1,6 +1,6 @@
 from tkinter import filedialog # UI, speziell Dateiauswahl
 import customtkinter as ctk # UI
-import qrcode # QR-Code Erzeugung
+import qrcode  # QR-Code Erzeugung
 import cv2
 from PIL import Image
 import io # Cache Nutzung für QR-Code Vorschau
@@ -24,6 +24,9 @@ class QRCodeApp(ctk.CTk):
         self.geometry(f"{app_width}x{app_height}")
         self.resizable(False, False) # Änderung von None zu False (Missverständnis)
         self.iconbitmap("app_icon_white.ico")
+
+        ctk.set_appearance_mode("dark")
+        ctk.set_default_color_theme("dark-blue")
 
         # Window Grid-Konfiguration
         self.columnconfigure(0, weight=2)
@@ -112,7 +115,14 @@ class QRCodeApp(ctk.CTk):
 
         if titel and author and verlag:
             # QR-Code Daten
-            qr_data = f"Titel: {titel}, Author: {author}, Verlag: {verlag}, Edition: {auflage}, Year: {jahr}, Category: {kategorie}, Anzahl : {anzahl}"
+            qr_data = f"""
+            Titel: {titel}
+            Author: {author}
+            Verlag: {verlag}
+            Edition: {auflage}
+            Veröffentlicht: {jahr}
+            Kategorie: {kategorie}
+            Anzahl : {anzahl}"""
 
             # QR-Code generieren
             qr = qrcode.QRCode(version=None, box_size=10, border=5, error_correction=qrcode.constants.ERROR_CORRECT_H)
@@ -162,7 +172,7 @@ class QRCodeApp(ctk.CTk):
         if file_path:
             self.scan_qr_code(file_path)
 
-            # "QR-Code Bild hochladen"-Button
+            # Modifizierung des Upload Frames nach erstmaligem Upload
             self.upload_button = ctk.CTkButton(self.upload_frame, text="QR-Code Bild hochladen",
                                                command=self.upload_qr_image)
             self.upload_button.grid(row=0, column=0, padx=50, pady=75, sticky="NSEW")
