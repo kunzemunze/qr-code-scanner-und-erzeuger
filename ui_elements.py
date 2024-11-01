@@ -65,6 +65,10 @@ class UIElements:
         self.entry_anzahl = ctk.CTkEntry(self.info_frame, placeholder_text="Anzahl")
         self.entry_anzahl.grid(row=3, column=1, padx=10, pady=10, sticky="ew")
 
+        # Schalter für Test Daten
+        self.lorem_ipsum_switch = ctk.CTkSwitch(self.info_frame, text="", command=self.test_daten)
+        self.lorem_ipsum_switch.grid(row=0, column=2, columnspan=3, padx=10, pady=10, sticky="e")
+
         # Button zum Erzeugen des QR-Codes
         generate_button = ctk.CTkButton(self.info_frame, text="QR-Code erzeugen", command=generate_qr_code_callback)
         generate_button.grid(row=4, column=0, columnspan=3, padx=10, pady=10)
@@ -106,5 +110,24 @@ class UIElements:
         analyse_result.grid(row=1, column=1, padx=20, pady=20, sticky="nsew")
 
         # Ergebnis Label
-        self.result_label = ctk.CTkLabel(analyse_result, text="")
-        self.result_label.grid(row=1, column=0, padx=10, pady=10)
+        self.result_label = ctk.CTkLabel(analyse_result, text="", anchor="w")
+        self.result_label.grid(row=0, column=0, padx=20, pady=20)
+
+    def test_daten(self):  # Funktion für Testdateneingabe
+        lorem_ipsum_daten = {
+            "titel": "Lorem Ipsum",
+            "author": "Dolor Sit Amet",
+            "verlag": "Sed Do Eiusmod"
+        }
+
+        if self.lorem_ipsum_switch.get():  # Wenn der Schalter aktiv ist
+            self.entry_titel.delete(0, ctk.END)
+            self.entry_titel.insert(0, lorem_ipsum_daten["titel"])
+            self.entry_author.delete(0, ctk.END)
+            self.entry_author.insert(0, lorem_ipsum_daten["author"])
+            self.entry_verlag.delete(0, ctk.END)
+            self.entry_verlag.insert(0, lorem_ipsum_daten["verlag"])
+        else:  # Wenn der Schalter deaktiviert ist
+            self.entry_titel.delete(0, ctk.END)
+            self.entry_author.delete(0, ctk.END)
+            self.entry_verlag.delete(0, ctk.END)

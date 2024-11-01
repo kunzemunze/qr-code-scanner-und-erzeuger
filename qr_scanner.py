@@ -31,7 +31,7 @@ class QRScanner:
 
         if decoded_objects:
             decoded_data = decoded_objects[0].data.decode("utf-8")
-            self.ui_elements.result_label.configure(text=f"QR-Code Inhalt: {decoded_data}")
+            self.ui_elements.result_label.configure(text=f"QR-Code Inhalt: {decoded_data}", anchor="w")
         else:
             self.ui_elements.result_label.configure(text="Kein QR-Code gefunden oder ungültig", anchor="center")
 
